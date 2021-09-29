@@ -16,55 +16,6 @@ BAG_DESC_RECUR = 'SmartTrash Subscription'
 BAG_PRICE_RECUR = 1499
 
 
-# DEPRECATED
-def create_price(prod_id, price):
-    price = stripe.Price.create(
-        product=prod_id,
-        unit_amount=price,
-        currency='usd',
-    )
-    return price
-
-
-# DEPRECATED
-def product_price_setup(force_new=False):
-    desc_bag = 'SmartTrash Bags (10)'
-    desc_bin = 'SmartBin'
-    prod_bag, prod_bin = None, None
-    price_bag, price_bin = None, None
-
-    all_products = stripe.Product.list()
-
-    bag_exists = list(filter(lambda x: x.name == desc_bag, all_products))
-    if force_new or not bag_exists:
-        print("Creating SmartBags product")
-        prod_bag = stripe.Product.create(name=desc_bag)
-        price_bag = stripe.Price.create(product=prod_bag.id, unit_amount=2999, currency='usd')
-        print("new product ID:" + str(prod_bag.id) + ", price ID:" + str(price_bag.id))
-        # , recurring={'interval': 'month'})
-
-    bin_exists = list(filter(lambda x: x.name == desc_bin, all_products))
-    if force_new or not bin_exists:
-        print("Creating SmartBin product")
-        prod_bin = stripe.Product.create(name=desc_bin)
-        price_bin = stripe.Price.create(product=prod_bin.id, unit_amount=19999, currency='usd')
-        print("new product ID:" + str(prod_bin.id) + ", price ID:" + str(price_bin.id))
-
-
-# DEPRECATED
-def create_invoice(cus_id, price_id):
-    stripe.InvoiceItem.create(
-        customer=cus_id,
-        price=price_id,
-    )
-
-    invoice = stripe.Invoice.create(
-        customer=cus_id,
-        auto_advance=True  # auto-finalize this draft after ~1 hour
-    )
-    # print("invoice is:" + str(invoice))
-
-
 def get_product_and_price(input_desc, input_price, force_new=False, is_recurring=False):
     print("Product {prod} and price {price} setup".format(prod=input_desc, price=input_price))
     item_prod, item_price = None, None
