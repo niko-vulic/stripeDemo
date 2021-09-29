@@ -132,7 +132,7 @@ def complete_setup(force_new=False):
     # Setup customers from hard-coded dummy data
     customers = cust_setup()
 
-    # Setup the items for the first invoice
+    # Setup the items for the first invoice and send to all customers
     first_invoice_items = [bin[1], bag[1]]
     invoices = send_invoice(customers, first_invoice_items)
 
