@@ -1,22 +1,24 @@
 import stripe
 
-keyFile = open('api_key.txt', 'r')
+keyFile = open('../../api_key.txt', 'r')
 stripe.api_key = keyFile.readline().rstrip()
 
-emailFile = open('email.txt', 'r')
+emailFile = open('../../email.txt', 'r')
 EMAIL = emailFile.readline().rstrip()
 
 BAG_DESC = 'SmartTrash Bags (10)'
 BAG_PRICE = 2999
+BAG_IMG = 'https://i.imgur.com/bJLvY3H.png'
 
 BIN_DESC = 'SmartBin'
 BIN_PRICE = 19999
+BIN_IMG = 'https://i.imgur.com/dnu8gbl.png'
 
 BAG_DESC_RECUR = 'SmartTrash Subscription'
 BAG_PRICE_RECUR = 1499
 
 
-def get_product_and_price(input_desc, input_price, force_new=False, is_recurring=False):
+def get_product_and_price(input_desc, input_price, input_img, force_new=False, is_recurring=False):
     print("Product {prod} and price {price} setup".format(prod=input_desc, price=input_price))
     item_prod, item_price = None, None
     all_products = stripe.Product.list()
@@ -25,7 +27,10 @@ def get_product_and_price(input_desc, input_price, force_new=False, is_recurring
     item_exists = list(filter(lambda x: x.name == input_desc, all_products))
     if force_new or not item_exists:
         print("--Creating {desc} product via API".format(desc=input_desc))
-        item_prod = stripe.Product.create(name=input_desc)
+        if input_img:
+            item_prod = stripe.Product.create(name=input_desc, images=[input_img])
+        else:
+            item_prod = stripe.Product.create(name=input_desc)
     else:
         print("--Product already exists, retrieved from list API")
         item_prod = item_exists[0]
@@ -44,6 +49,16 @@ def get_product_and_price(input_desc, input_price, force_new=False, is_recurring
     print("--Product ID:" + str(item_prod.id) + ", price ID:" + str(item_price.id))
     return item_prod, item_price
 
+
+def query_price(input_price):
+        item_price = None
+        all_prices = stripe.Price.list()
+        price_exists = list(filter(lambda x: x.unit_amount == input_price, all_prices))
+
+        if price_exists:
+            item_price = price_exists[0]
+
+        return item_price
 
 # Hardcoded customer creation
 def cust_setup():
@@ -76,9 +91,9 @@ def setup_subscription(customer_id, price_id):
 
 def complete_setup(force_new=False):
     # Returns item_prod, item_price
-    bin = get_product_and_price(BIN_DESC, BIN_PRICE, force_new)
-    bag = get_product_and_price(BAG_DESC, BAG_PRICE, force_new)
-    ongoing_sub = get_product_and_price(BAG_DESC_RECUR, BAG_PRICE_RECUR, force_new, True)
+    bin = get_product_and_price(BIN_DESC, BIN_PRICE, BIN_IMG, force_new)
+    bag = get_product_and_price(BAG_DESC, BAG_PRICE, BAG_IMG, force_new)
+    ongoing_sub = get_product_and_price(BAG_DESC_RECUR, BAG_PRICE_RECUR, None, force_new, True)
 
     # Setup customers from hard-coded dummy data
     customers = cust_setup()
