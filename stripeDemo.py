@@ -1,9 +1,9 @@
 import stripe
 
-keyFile = open('../../api_key.txt', 'r')
+keyFile = open('api_key.txt', 'r')
 stripe.api_key = keyFile.readline().rstrip()
 
-emailFile = open('../../email.txt', 'r')
+emailFile = open('email.txt', 'r')
 EMAIL = emailFile.readline().rstrip()
 
 BAG_DESC = 'SmartTrash Bags (10)'

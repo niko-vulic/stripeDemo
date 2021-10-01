@@ -9,14 +9,14 @@ import os
 from flask import Flask, redirect, request
 
 import stripe
-import apiDemo.stripeDemo
 # This is a sample test API key. Sign in to see examples pre-filled with your key.
 
 keyFile = open('../api_key.txt', 'r')
 stripe.api_key = keyFile.readline().rstrip()
 
-PRICE_ID_BAG = 'price_1JfR2AIlYoX5Aj60q4rHIjDC'
-PRICE_ID_BIN = stripeDemo.queryPrice(19999)
+PRICE_ID_BAG = 'price_1JfYvZIlYoX5Aj60qt1ng5C6'
+PRICE_ID_BIN = 'price_1JfYvZIlYoX5Aj60vDbJNMb4'
+
 
 app = Flask(__name__,
             static_url_path='',
